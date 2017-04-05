@@ -7,6 +7,7 @@
 .lib/
 dist/*
 target/
+gen/
 lib_managed/
 src_managed/
 project/boot/
