@@ -1,7 +1,18 @@
-# spatial-quickstart
+# Spatial Quickstart
 
-![Baguette](http://www.delifrance.com/media/catalog/product/cache/7/image/9df78eab33525d08d6e5fb8d27136e95/s/5/s5634b.jpg)
+## Prerequisites:
+  
+  * [Python](https://www.python.org/downloads/)
+  * Java 8 ([Ubuntu directions](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-get-on-ubuntu-16-04))
 
-To run:
+## To install:
+  
+  `git clone https://github.com/stanford-ppl/spatial-quickstart.git`
 
-    bin/spatial <name of app> --scala
+
+## To run:
+
+    ```
+    bin/spatial <name of app>
+    ./<name of app>.sim <arguments>
+    ```
