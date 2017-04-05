@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 import os, sys, datetime
 import subprocess
+import re
 from os.path import dirname, abspath
 
 class bcolors:
@@ -56,7 +57,7 @@ def main():
 
 
   SPATIAL_HOME = os.getenv("SPATIAL_HOME", dirname(dirname(abspath(__file__))))
-  print( dirname(dirname(abspath(__file__))))
+  ##print( dirname(dirname(abspath(__file__))))
   JAVA_HOME = os.getenv("JAVA_HOME", "")
   java_opts = os.getenv("JAVA_OPTS", "")
 
@@ -157,38 +158,48 @@ def main():
 
   java_opts = java_opts + cp
 
+  if JAVA_HOME != "":
+    JAVA_HOME = JAVA_HOME + "/bin/"
+
+	## Check java version
+  devnull = open(os.devnull, 'w')
+  try:
+    javaVersion = subprocess.check_output([JAVA_HOME + "java", "-version"], stderr=subprocess.STDOUT)
+  except: 
+    devnull.close()
+    print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] No version of Java found installed")
+    print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Please install Java 1.8 (aka Java 8) and set the JAVA_HOME environment variable")
+    print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Spatial compilation failed")
+    exit(1)      
+
+  devnull.close()
+  pattern = '\"(\d+\.\d+).*\"'
+  version = re.search(pattern, str(javaVersion)).groups()    
+  if float(version[0]) < 1.8:
+    print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Current version of Java is " + version[0])
+    print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Please install Java 1.8 (aka Java 8) and set the JAVA_HOME environment variable")
+    print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Spatial compilation failed")
+    exit(1)
+
 
   ## Run Spatial
-  java_cmd = JAVA_HOME + "/bin/java " + java_opts + " " + opts.app + " "
-  print(java_cmd)
+  java_cmd = JAVA_HOME + "java " + java_opts + " " + opts.app + " "
   #print "[ " + bcolors.WARNING + "INFO" + bcolors.ENDC + " ] Running Spatial with options: " + str(java_opts)
-  #print java_cmd
   
-# sbt = subprocess.call(("sbt", "compile"))
-# sbt.wait()
-  sbt = "sbt compile"
+  sbt = "bin/sbt compile"
   ecode = os.system(sbt + " && " + java_cmd)
   if ecode != 0:
       print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Spatial compilation failed")
-
-  ## TODO: How to determine publish directory?
-  # os.system(SPATIAL_HOME + 'bin/delitec ' + opts.app + ' ' + deliteArgs + ' --dump_exception 2>&1 | tee compile.log')
-
-  # if opts.maxj and opts.cpp:
-  #   print 'Running Spatial with arguments: ' + ' '.join(args)
-  #   if opts.outdir == "out":
-  #     os.system(publish + 'bin/delite ' + opts.app + ' --no-jvm --no-compile --cpp=1 --maxj=1 --codecache=' + os.getenv("HYPER_HOME", "") + '/spatial/published/Spatial/out ' + ' '.join(args) + ' 2>&1 | tee run.log')
-  #   else:
-  #     os.system(publish + 'bin/delite ' + opts.app + ' --no-jvm --no-compile --cpp=1 --maxj=1 --codecache=' + opts.outdir + ' ' + ' '.join(args[0:]) + ' 2>&1 | tee run.log')
-  # elif opts.chisel and opts.cpp:
-  #   print 'Running Spatial with arguments: ' + ' '.join(args[0:])
-  #   if opts.outdir == "out":
-  #     os.system(publish + 'bin/delite ' + opts.app + ' --no-jvm --no-compile --cpp=1 --chisel=1 --codecache=' + os.getenv("HYPER_HOME", "") + '/spatial/published/Spatial/out ' + ' '.join(args[0:]) + ' 2>&1 | tee run.log')
-  #   else:
-  #     os.system(publish + 'bin/delite ' + opts.app + ' --no-jvm --no-compile --cpp=1 --chisel=1 --codecache=' + opts.outdir + ' ' + ' '.join(args[0:]) + ' 2>&1 | tee run.log')
-  # elif opts.test:
-  #   print 'Running Spatial Scala Test with arguments: ' + ' '.join(args)
-  #   os.system(publish + 'bin/delite ' + opts.app + ' --codecache=' + opts.outdir + ' ' + ' '.join(args) + ' 2>&1 | tee run.log')
+  else:
+    ## TODO: This should be a real binary soon!
+    fakeBinary = open(opts.app + ".sim", 'w')
+    fakeBinary.write("#!/bin/bash\n\n")
+    fakeBinary.write("pushd .\n")
+    fakeBinary.write("cd gen/" + opts.app + "/scala\n")
+    fakeBinary.write(SPATIAL_HOME + "/bin/sbt compile\n")
+    fakeBinary.write(SPATIAL_HOME + "/bin/sbt \"run $@\"\n")
+    fakeBinary.close()
+    os.system("chmod u+x " + opts.app + ".sim")
 
 if __name__ == "__main__":
     main()
