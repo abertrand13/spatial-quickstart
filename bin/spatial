@@ -163,8 +163,11 @@ def main():
   print(java_cmd)
   #print "[ " + bcolors.WARNING + "INFO" + bcolors.ENDC + " ] Running Spatial with options: " + str(java_opts)
   #print java_cmd
-
-  ecode = os.system(java_cmd)
+  
+# sbt = subprocess.call(("sbt", "compile"))
+# sbt.wait()
+  sbt = "sbt compile"
+  ecode = os.system(sbt + " && " + java_cmd)
   if ecode != 0:
       print("[" + bcolors.FAIL + "error" + bcolors.ENDC + "] Spatial compilation failed")
 
