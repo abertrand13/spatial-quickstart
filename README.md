@@ -16,3 +16,8 @@
 bin/spatial <name of app>
 ./<name of app>.sim <arguments>
 ```
+
+## Help
+
+  * [Documentation](https://spatial.stanford.edu)
+  * [Google Groups](https://groups.google.com/forum/#!forum/spatial-lang-users)
