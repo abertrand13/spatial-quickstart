@@ -12,7 +12,7 @@
 
 ## To run:
 
-    ```
-    bin/spatial <name of app>
-    ./<name of app>.sim <arguments>
-    ```
+```bash
+bin/spatial <name of app>
+./<name of app>.sim <arguments>
+```
