@@ -8,9 +8,9 @@ val paradiseVersion = "2.1.0"
 
 publishArtifact := false
 trapExit := false
-libraryDependencies += "stanford-ppl" %% "spatial" % "1.0"
 
 scalaSource in Compile := baseDirectory(_/ "src").value
+//libraryDependencies += "stanford-ppl" %% "spatial" % "1.0"
 
 //paradise
 resolvers += Resolver.sonatypeRepo("snapshots")
