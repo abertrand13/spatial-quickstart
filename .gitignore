@@ -1,6 +1,9 @@
 *.class
 *.log
 *.sim
+*.vcs
+
+.idea/*
 
 # sbt specific
 .cache
