@@ -49,6 +49,11 @@ Usage: spatial [options]
 
 
 def main():
+  git_cmd = "git pull origin dev"
+  ecode = os.system(git_cmd)
+  if ecode != 0:
+    print("Cannot update Spatial. Please check your internet connection.")
+
   parser = SpatialArgumentParser()
   parser.add_argument('app', type=str, help='name of application to run')
 
