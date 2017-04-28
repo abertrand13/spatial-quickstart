@@ -43,10 +43,12 @@ c1->run();
 Then add your implementation in the "Application" function. Here are the features you need to add: 
 1. Set up a UDP client that listens to connections from any ip addresses. Please set the port to "SERVICE_PORT", as the network video packets will be sent to this port.
 2. Disassemble the network video packets. In each packet, the first 4 bytes are used to store the row number of a frame. The rest bytes store one line of pixels from that row. 
-3. Write the pixels to the back pixel buffer. Take a look at the functions implemented in:
+4. Write the pixels to the back pixel buffer. Take a look at the functions implemented in:
 ```bash
 ~/spatial-quickstart/gen/SwitchVideo/cpp/fringeDE1SoC/FringeContextBase.h
 ```
+5. Keep track of the state of the switches. If some of the switches is on, you need to disable the network video and enable the local camera
+
 You can use either writeRow2BackBuffer or writePixel2BackBuffer to write to the back buffer. Don't forget to sync the front and the back buffer by setting the swap flag!
 
 Once you are confident with your software implementation, run: 
