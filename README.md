@@ -71,8 +71,10 @@ And you will see:
 inet addr:172.24.89.108  Bcast:172.24.89.255  Mask:255.255.255.0
 
 ```
-The inet addr is the IP address of ee109-04.
-
+The inet addr is the IP address of ee109-04. Then sign out of ee109-04 by running:
+```bash
+exit
+```
 
 Then, you will need to sign in to ee109-03 and start to stream video to ee109-04 through UDP by running: 
 ```bash
