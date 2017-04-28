@@ -1,23 +1,94 @@
-# Spatial Quickstart
+# Networking Video
+In this lab, you will be implementing an app that allows you to receive video stream from a remote FPGA board. In addition, your app also allows users to switch between local camera video and remote camera video by turning on / off the on-board switches.
 
-## Prerequisites:
-  
-  * [Python](https://www.python.org/downloads/)
-  * Java 8 ([Ubuntu directions](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-get-on-ubuntu-16-04))
+If you have not mounted your spatial-quickstart on your local computer, please do so by following the instructions on canvas.
 
-## To install:
-  
-  `git clone https://github.com/stanford-ppl/spatial-quickstart.git`
-
-
-## To run:
-
+To start working on this lab, please sign in to your tucson server by running:
 ```bash
-bin/spatial <name of app>
-./<name of app>.sim <arguments>
+ssh USERNAME@tucson.stanford.edu
+```
+After login, please run: 
+```bash
+cd spatial-quickstart
+cd src
+```
+In the src folder, please complete SwitchVideo.scala. You will need to implement two functions including: 
+1. Reading from the switches and store the value to some hardware that is visible to the ARM.
+2. Implement local video streaming by connecting a streamIn of camera to a streamOut of VGA.
+
+After you complete the hardware description, you will need to generate the hardware and software files. Please run: 
+```bash
+cd ~/spatial-quickstart
+bin/spatial SwitchVideo --synth
 ```
 
-## To get help:
+To view the generated files, run:
+```bash
+cd ~/spatial-quickstart/gen/SwitchVideo
+```
 
-  * [Documentation](https://spatial.stanford.edu)
-  * [Google Groups](https://groups.google.com/forum/#!forum/spatial-lang-users)
+Once you are confident with your hardware implementation, run:
+```bash
+make de1soc-hw
+```
+
+For the software part, your task is to implement a UDP client and run it on your local board. The UDP client should disassemble the network video stream coming from a remote board and displays either the local video or the network video to VGA depending on values read from the switches. If all the switches are turned off, the client should display the network video. Otherwise the client should display the local video.
+
+In the cpp folder, please modify TopHost.cpp to complete your UDP client app.
+First, remove the line 
+```cpp
+c1->run();
+```
+
+Then add your implementation in the "Application" function. Here are the features you need to add: 
+1. Set up a UDP client that listens to connections from any ip addresses. Please set the port to "SERVICE_PORT", as the network video packets will be sent to this port.
+2. Disassemble the network video packets. In each packet, the first 4 bytes are used to store the row number of a frame. The rest bytes store one line of pixels from that row. 
+3. Write the pixels to the back pixel buffer. Take a look at the functions implemented in:
+```bash
+~/spatial-quickstart/gen/SwitchVideo/cpp/fringeDE1SoC/FringeContextBase.h
+```
+You can use either writeRow2BackBuffer or writePixel2BackBuffer to write to the back buffer. Don't forget to sync the front and the back buffer by setting the swap flag!
+
+Once you are confident with your software implementation, run: 
+```bash
+cd ~/spatial-quickstart/gen/SwitchVideo
+make de1soc-sw
+```
+This command will compile your software implementation, and pack the binaries into a folder called prog. For example, let's say that you want to run the client on a local board called ee109-04. Run:
+```bash
+scp -r prog ee109@ee109-04:~/
+```
+
+To set up a remote board, you will need to choose an FPGA board in the ee109 lab that is connected to a camera. For example, let's say we choose ee109-03 to be the remote board and ee109-04 to be the local board. 
+First, you will need to determine the IP address of the local board. To do so, you need to sign in to ee109-04 and run: 
+```bash
+ssh ee109@ee109-04
+/sbin/ifconfig eth0| grep 'inet addr:'
+```
+
+And you will see: 
+```bash
+inet addr:172.24.89.108  Bcast:172.24.89.255  Mask:255.255.255.0
+
+```
+The inet addr is the IP address of ee109-04.
+
+
+Then, you will need to sign in to ee109-03 and start to stream video to ee109-04 through UDP by running: 
+```bash
+ssh ee109@ee109-03
+cd serverPack/
+sudo ./startServer.sh 172.24.89.108
+```
+
+On your local board side (ee109-04), run: 
+```bash
+ssh ee109@ee109-04
+cd prog
+sudo ./Top
+```
+
+If your implementation is correct, you shall see the VGA displaying videos from the remote board. Please turn on / off the switches to check if you can switch to view the local video.
+
+# Sobel Filter
+Coming Soon! The file to start is in ~/spatial-quickstart/src
