@@ -1,7 +1,7 @@
 # Networking Video
 In this lab, you will be implementing an app that allows you to receive video stream from a remote FPGA board. In addition, your app also allows users to switch between local camera video and remote camera video by turning on / off the on-board switches.
 
-If you have not mounted your spatial-quickstart on your local computer, please do so by following the instructions on canvas.
+If you have not mounted your spatial-quickstart on your local computer, please do so by following the instructions on canvas, under the annoucement "Instructions on new Spatial workflow"
 
 To start working on this lab, please sign in to your tucson server by running:
 ```bash
