@@ -51,6 +51,8 @@ Then add your implementation in the "Application" function. Here are the feature
 
 You can use either writeRow2BackBuffer or writePixel2BackBuffer to write to the back buffer. Don't forget to sync the front and the back buffer by setting the swap flag!
 
+**If you want to regenerate files for your app, please keep a copy of TopHost.cpp somewhere else and then start the code generation.**
+
 Once you are confident with your software implementation, run: 
 ```bash
 cd ~/spatial-quickstart/gen/SwitchVideo
