@@ -100,6 +100,7 @@ If your implementation is correct, you shall see the VGA displaying videos from 
 # Sobel Filter
 Please take a look at the StreamingSobel.scala in ~/spatial-quickstart/src, and complete the app by following the comments. After you complete the app, here is the procedure to test it: 
 ```bash
+cd ~/spatial-quickstart
 bin/spatial StreamingSobel --sim
 cd gen/StreamingSobel/
 chmod +x run.sh 
@@ -110,3 +111,4 @@ cd ../..
 bin/imagify cameraman_out.dat 
 bin/imagify camera cameraman_out.dat 128 128 
 ```
+An image that displays the edges within the original picture will show up. 
