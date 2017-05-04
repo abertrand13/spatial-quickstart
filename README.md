@@ -31,6 +31,7 @@ Once you are confident with your hardware implementation, run:
 ```bash
 make de1soc-hw
 ```
+**In order to test your hardware, you need to at least replace c1->run() with c1->start() and a while(1) loop in your TopHost.cpp. c1->start() starts your design on board, and the while(1) loop allows your streaming app to keep running.**
 
 For the software part, your task is to implement a UDP client and run it on your local board. The UDP client should disassemble the network video stream coming from a remote board and displays either the local video or the network video to VGA depending on values read from the switches. If all the switches are turned off, the client should display the network video. Otherwise the client should display the local video.
 
@@ -97,4 +98,16 @@ sudo ./Top
 If your implementation is correct, you shall see the VGA displaying videos from the remote board. Please turn on / off the switches to check if you can switch to view the local video.
 
 # Sobel Filter
-Coming Soon! The file to start is in ~/spatial-quickstart/src
+Please take a look at the StreamingSobel.scala in ~/spatial-quickstart/src, and complete the app by following the comments. After you complete the app, here is the procedure to test it: 
+```bash
+bin/spatial StreamingSobel --sim
+cd gen/StreamingSobel/
+chmod +x run.sh 
+./run.sh 128 
+Enter name of file to use for StreamIn imgIn (StreamingSobel.scala:28:35): ../../cameraman.dat
+Enter name of file to use for StreamOut imgOut (StreamingSobel.scala:29:36): ../../cameraman_out.dat
+cd ../..
+bin/imagify cameraman_out.dat 
+bin/imagify camera cameraman_out.dat 128 128 
+```
+```
