@@ -110,4 +110,3 @@ cd ../..
 bin/imagify cameraman_out.dat 
 bin/imagify camera cameraman_out.dat 128 128 
 ```
-```
