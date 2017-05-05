@@ -108,7 +108,6 @@ chmod +x run.sh
 Enter name of file to use for StreamIn imgIn (StreamingSobel.scala:28:35): ../../cameraman.dat
 Enter name of file to use for StreamOut imgOut (StreamingSobel.scala:29:36): ../../cameraman_out.dat
 cd ../..
-bin/imagify cameraman_out.dat 
 bin/imagify camera cameraman_out.dat 128 128 
 ```
 An image that displays the edges within the original picture will show up. 
