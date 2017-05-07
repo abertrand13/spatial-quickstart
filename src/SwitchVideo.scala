@@ -28,12 +28,12 @@ object SwitchVideo extends SpatialApp {
 	
     Accel(*) {
       	// Write your hardware description here
-		// All necessary val's go here
+	// All necessary val's go here
 
-		val pixel = imgIn.value()
+	val pixel = imgIn.value()
 
-		io1 := swInput.value()
-		imgOut := bit16(pixel.b.to[UInt5], pixel.g.to[UInt6], pixel.r.to[UInt5])
+	io1 := swInput.value()
+	imgOut := bit16(pixel.b.to[UInt5], pixel.g.to[UInt6], pixel.r.to[UInt5])
     }
 	
 	// Not sure if this is needed (with Pipe)
