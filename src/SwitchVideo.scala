@@ -11,27 +11,30 @@ object SwitchVideo extends SpatialApp {
   type UInt8 = FixPt[FALSE,_8,_0]
   type UInt6 = FixPt[FALSE,_6,_0]
 
-  @struct case class 24bit(b: UInt8, g: UInt8, r: UInt8)
-  @struct case class 16bit(b: UInt6, g: UInt6, r: UInt6)
+  @struct case class bit24(b: UInt8, g: UInt8, r: UInt8)
+  @struct case class bit16(b: UInt6, g: UInt6, r: UInt6)
 
   @virtualize 
   def main() { 
     // Define your IOs here
 
-	
 	val io1 = HostIO[Int]
 	val switch = target.SliderSwitch
 	val swInput = StreamIn[Int](switch)
-	// Not sure what to do after this ^^
-	// to make sure it will work down there vv
 
-	val imgIn = StreamIn[24bit](target.VideoCamera)
-	val imgOut = StreamOut[16bit](target.VGA)
+	val imgIn = StreamIn[bit24](target.VideoCamera)
+	val imgOut = StreamOut[bit16](target.VGA)
 	
     Accel(*) {
       	// Write your hardware description here
-	
-		Pipe { io1 := swInput.value() }
+		// All necessary val's go here
+
+		Stream(*) { _ =>
+			val pixel = imgIn.value()
+
+			Pipe { io1 := swInput.value() }
+			Pipe { imgOut := bit16(pixel.b.to[UInt6], pixel.g.to[UInt6], pixel.r.to[UInt6]) }
+		}
     }
 	
 	val switch_value = getArg(io1)
