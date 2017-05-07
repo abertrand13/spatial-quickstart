@@ -10,9 +10,10 @@ object SwitchVideo extends SpatialApp {
 
   type UInt8 = FixPt[FALSE,_8,_0]
   type UInt6 = FixPt[FALSE,_6,_0]
+  type UInt5 = FixPt[FALSE,_5,_0]
 
-  @struct case class bit24(b: UInt8, g: UInt8, r: UInt8)
-  @struct case class bit16(b: UInt6, g: UInt6, r: UInt6)
+  @struct case class bit24(r: UInt8, g: UInt8, b: UInt8)
+  @struct case class bit16(b: UInt5, g: UInt6, r: UInt5)
 
   @virtualize 
   def main() { 
@@ -29,15 +30,13 @@ object SwitchVideo extends SpatialApp {
       	// Write your hardware description here
 		// All necessary val's go here
 
-		Stream(*) { _ =>
-			val pixel = imgIn.value()
+		val pixel = imgIn.value()
 
-			Pipe { io1 := swInput.value() }
-			Pipe { imgOut := bit16(pixel.b.to[UInt6], pixel.g.to[UInt6], pixel.r.to[UInt6]) }
-		}
+		io1 := swInput.value()
+		imgOut := bit16(pixel.b.to[UInt5], pixel.g.to[UInt6], pixel.r.to[UInt5])
     }
 	
-	val switch_value = getArg(io1)
-	println("Value: " + switch_value)
+	// Not sure if this is needed (with Pipe)
+	// val switch_value = getArg(io1)
   }
 }
