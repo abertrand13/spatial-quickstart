@@ -11,8 +11,10 @@ object SwitchVideo extends SpatialApp {
   type UInt8 = FixPt[FALSE,_8,_0]
   type UInt6 = FixPt[FALSE,_6,_0]
   type UInt5 = FixPt[FALSE,_5,_0]
+  type UInt3 = FixPt[FALSE,_3,_0]
+  type UInt2 = FixPt[FALSE,_2,_0]
 
-  @struct case class bit24(r: UInt8, g: UInt8, b: UInt8)
+  @struct case class bit24(b: UInt3, B: UInt5, g: UInt2, G: UInt6, r: UInt3, R: UInt5)
   @struct case class bit16(b: UInt5, g: UInt6, r: UInt5)
 
   @virtualize 
@@ -33,7 +35,7 @@ object SwitchVideo extends SpatialApp {
 	val pixel = imgIn.value()
 
 	io1 := swInput.value()
-	imgOut := bit16(pixel.b.to[UInt5], pixel.g.to[UInt6], pixel.r.to[UInt5])
+	imgOut := bit16(pixel.B.to[UInt5], pixel.G.to[UInt6], pixel.R.to[UInt5])
     }
 	
 	// Not sure if this is needed (with Pipe)
