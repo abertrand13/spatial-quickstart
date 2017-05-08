@@ -23,7 +23,7 @@
 using std::vector;
 
 #define BUFLEN 2048
-#define SERVICE_PORT 21234
+//#define SERVICE_PORT 21234
 
 void Application(int numThreads, vector<string> * args) {
   // Create an execution context.
@@ -39,13 +39,16 @@ void Application(int numThreads, vector<string> * args) {
   c1->start();
   // All Code Goes Between Here
   
-  stuct sockaddr_in myaddr, remaddr;
-  int i, fd, slen = sizeof(remaddr);
+  struct sockaddr_in myaddr;
+  struct sockaddr_in remaddr; /* remote address */
+  socklen_t addrlen = sizeof(remaddr);        /* length of addresses */
+
+  int i, fd;
+  unsigned int slen = sizeof(myaddr);
   char buf[BUFLEN];
   int recvlen;
-  char *server = 172.24.89.108;
 
-  if ((fd=socket(AF_INET, SOCK_DGRAM, 0)) == -1) return 0;
+  if ((fd=socket(AF_INET, SOCK_DGRAM, 0)) == -1) return;
 
   memset((char*)&myaddr, 0, sizeof(myaddr));
   myaddr.sin_family = AF_INET;
@@ -53,24 +56,28 @@ void Application(int numThreads, vector<string> * args) {
   myaddr.sin_port = htons(0);
 
   if (bind(fd, (struct sockaddr*)&myaddr, sizeof(myaddr)) < 0) {
-	perrer("Bind failed.");
-	return 0;
-  }
-
-  memset((char*)&remaddr, 0, sizeof(remaddr));
-  remaddr.sin_family = AF_INET;
-  remaddr.sin_port = htons(SERVICE_PORT);
-  if (inet_aton(server, &remaddr.sin_addr) == 0) {
-	fprintf(stderr, "inet_aton() failed\n");
-	exit(1);
+	perror("Bind failed.");
+	return;
   }
 
   while(1) {
-//	recvlen = recvfrom(fd, buf, BUFLEN, 0, (struct sockaddr*)&remaddr, &slen);
-	if (c1->readReg(io1) == 0) c1->enableCamera();
+  	printf("Step 3.\n");
+	recvlen = recvfrom(fd, buf, BUFLEN, 0, (struct sockaddr*)&remaddr, &slen);
+	printf("Received: %d\n", recvlen);
+	volatile int select = (int)c1->readReg(io1);
+	printf("Select Value: %d", select);
+	if (select == 0) c1->enableCamera();
 	else {
-		
-		
+		c1->enablePixelBuffer();		
+		// screen size is 640x480
+		int row = *(int*)buf;
+		short *row_data = (short*)(buf+4);
+		if (row == 319) {
+			c1->writeRow2BackBuffer(row, row_data, 1);
+		}
+		else {
+			c1->writeRow2BackBuffer(row, row_data, 0);
+		}
 	}
   }
   close(fd);
